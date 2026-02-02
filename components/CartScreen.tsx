@@ -100,15 +100,15 @@ const CartScreen: React.FC<CartScreenProps> = (props) => {
                     const isOriginal = item.notes === 'original';
 
                     return (
-                        <div key={item.id} className={`bg-card p-6 rounded-[2rem] shadow-2xl border ${isOriginal ? 'border-amber-500/20' : 'border-white/5'} flex flex-col bro-paper-card group relative overflow-hidden`}>
+                        <div key={item.id} className={`bg-card p-4 rounded-[1.5rem] shadow-xl border ${isOriginal ? 'border-amber-500/20' : 'border-white/5'} flex flex-col bro-paper-card group relative overflow-hidden`}>
                             {isOriginal && (
-                                <div className="absolute top-0 right-12 bg-amber-500 text-black text-[8px] font-black px-4 py-1 rounded-b-xl uppercase tracking-[0.2em] shadow-lg">Procesado</div>
+                                <div className="absolute top-0 right-10 bg-amber-500 text-black text-[7px] font-black px-3 py-0.5 rounded-b-lg uppercase tracking-[0.2em] shadow-lg">Procesado</div>
                             )}
 
                             <div className="flex justify-between items-start mb-6">
                                 <div className="max-w-[70%]">
                                     <h3
-                                        className="font-black text-xl text-white leading-tight uppercase italic tracking-tighter group-hover:text-brand transition-colors cursor-pointer"
+                                        className="font-black text-lg text-white leading-tight uppercase italic tracking-tighter group-hover:text-brand transition-colors cursor-pointer"
                                         onClick={() => !isOriginal && onEditItem(item.id)}
                                     >
                                         {item.name}
@@ -161,13 +161,12 @@ const CartScreen: React.FC<CartScreenProps> = (props) => {
                                         </div>
                                     )}
                                 </div>
-                                <div className="text-right">
-                                    <p className="font-black text-white leading-none text-2xl tracking-tighter">${(unitPrice * item.quantity).toFixed(2)}</p>
-                                    <p className="text-[10px] font-black text-gray-600 uppercase tracking-widest mt-1">Bs. {((unitPrice * item.quantity) * activeRate).toFixed(2)}</p>
+                                <div className="text-right shrink-0">
+                                    <p className="font-black text-white leading-none text-xl tracking-tighter">${(unitPrice * item.quantity).toFixed(2)}</p>
                                 </div>
                             </div>
 
-                            <div className="flex justify-between items-center mt-auto pt-5 border-t border-white/5">
+                            <div className="flex justify-between items-center mt-auto pt-4 border-t border-white/5">
                                 <div className="flex items-center gap-3">
                                     {!isOriginal && (
                                         <button onClick={() => onRemoveItem(item.id)} className="w-10 h-10 flex items-center justify-center bg-red-500/10 text-red-500 rounded-xl border border-red-500/20 active:scale-90 transition-all">
@@ -181,16 +180,16 @@ const CartScreen: React.FC<CartScreenProps> = (props) => {
                                     )}
                                 </div>
 
-                                <div className="flex items-center gap-4 bg-black/40 rounded-2xl p-1.5 border border-white/5">
+                                <div className="flex items-center gap-3 bg-black/40 rounded-2xl p-1 border border-white/5">
                                     {!isOriginal ? (
-                                        <button onClick={() => onUpdateQuantity(item.id, item.quantity - 1)} className="w-10 h-10 flex items-center justify-center bg-white/5 rounded-xl text-white font-black active:scale-90 transition-all border border-white/10 text-xl leading-none">−</button>
+                                        <button onClick={() => onUpdateQuantity(item.id, item.quantity - 1)} className="w-8 h-8 flex items-center justify-center bg-white/5 rounded-lg text-white font-black active:scale-90 transition-all border border-white/10 text-lg leading-none">−</button>
                                     ) : (
-                                        <div className="w-10 h-10 flex items-center justify-center bg-white/5 rounded-xl text-gray-700 border border-white/5">
-                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                                        <div className="w-8 h-8 flex items-center justify-center bg-white/5 rounded-lg text-gray-700 border border-white/5">
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
                                         </div>
                                     )}
-                                    <span className="font-black text-white w-6 text-center text-lg">{item.quantity}</span>
-                                    <button onClick={() => onUpdateQuantity(item.id, item.quantity + 1)} className="w-10 h-10 flex items-center justify-center bg-brand rounded-xl text-black font-black active:scale-90 transition-all shadow-lg text-xl leading-none">+</button>
+                                    <span className="font-black text-white w-5 text-center text-base">{item.quantity}</span>
+                                    <button onClick={() => onUpdateQuantity(item.id, item.quantity + 1)} className="w-8 h-8 flex items-center justify-center bg-brand rounded-lg text-black font-black active:scale-90 transition-all shadow-lg text-lg leading-none">+</button>
                                 </div>
                             </div>
                         </div>
@@ -198,12 +197,12 @@ const CartScreen: React.FC<CartScreenProps> = (props) => {
                 })}
             </div>
 
-            <div className="flex-shrink-0 bg-black/60 backdrop-blur-3xl p-8 shadow-[0_-20px_60px_rgba(0,0,0,0.8)] z-20 border-t border-white/10 rounded-t-[2.5rem]">
-                <div className="flex justify-between items-center mb-8 px-2">
-                    <span className="text-gray-500 font-black uppercase tracking-[0.3em] text-[10px]">Inversión Total</span>
+            <div className="flex-shrink-0 bg-black/60 backdrop-blur-3xl p-6 shadow-[0_-20px_60px_rgba(0,0,0,0.8)] z-20 border-t border-white/10 rounded-t-[2.5rem]">
+                <div className="flex justify-between items-center mb-6 px-2">
+                    <span className="text-gray-500 font-black uppercase tracking-[0.3em] text-[9px]">Total</span>
                     <div className="text-right">
-                        <span className="text-4xl font-black text-white leading-none tracking-tighter bro-gradient-text">${total.toFixed(2)}</span>
-                        <p className="text-[11px] font-black text-gray-500 uppercase tracking-widest mt-1">Bs. {(total * activeRate).toFixed(2)}</p>
+                        <span className="text-3xl font-black text-white leading-none tracking-tighter bro-gradient-text">${total.toFixed(2)}</span>
+                        <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest mt-1">Bs. {(total * activeRate).toFixed(2)}</p>
                     </div>
                 </div>
 

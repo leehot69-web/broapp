@@ -77,65 +77,41 @@ const MenuScreen: React.FC<MenuScreenProps> = ({
                     </div>
                 </div>
             ) : (
-                <div className="shrink-0 bg-black/30 backdrop-blur-lg py-3 px-4 flex flex-col z-30 relative border-b border-white/5">
-                    <div className="max-w-7xl mx-auto w-full">
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                                {businessLogo && (
-                                    <div className="w-9 h-9 rounded-full bg-gray-50 border border-gray-200 p-0.5 overflow-hidden">
-                                        <img src={businessLogo} alt="Logo" className="w-full h-full object-contain" />
-                                    </div>
-                                )}
-                                <div className="flex flex-col">
-                                    <h1 className="text-lg font-black text-white tracking-tighter leading-none uppercase italic border-b-2 border-brand pr-2">
-                                        {businessName}
-                                    </h1>
-                                    {isEditing && <span className="text-[9px] font-black text-amber-500 uppercase tracking-widest">Editando Cuenta</span>}
-                                </div>
-                            </div>
-
-                            {/* BOTÓN NUEVO PEDIDO / ABANDONAR */}
-                            {(cartItemCount > 0 || isEditing || (customerDetails?.name && customerDetails.name.trim() !== '')) && onClearCart && (
-                                <button
-                                    type="button"
-                                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); onClearCart(); }}
-                                    onTouchEnd={(e) => { e.preventDefault(); e.stopPropagation(); onClearCart(); }}
-                                    className={`${isEditing ? 'bg-amber-50 text-amber-600 border-amber-100' : 'bg-red-50 text-red-600 border-red-100'} px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest border active:scale-95 transition-all flex items-center gap-1.5 relative z-[100] shadow-md`}
-                                >
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                                    {isEditing ? 'Abandonar' : 'Nuevo'}
-                                </button>
-                            )}
-                        </div>
+                <div className="shrink-0 z-30 relative px-4 py-2">
+                    <div className="max-w-7xl mx-auto w-full flex items-center justify-between gap-4">
+                        {/* BOTÓN NUEVO PEDIDO / ABANDONAR - Ahora más discreto */}
+                        {(cartItemCount > 0 || isEditing || (customerDetails?.name && customerDetails.name.trim() !== '')) && onClearCart && (
+                            <button
+                                type="button"
+                                onClick={(e) => { e.preventDefault(); e.stopPropagation(); onClearCart(); }}
+                                onTouchEnd={(e) => { e.preventDefault(); e.stopPropagation(); onClearCart(); }}
+                                className={`flex-grow sm:flex-initial h-10 px-6 rounded-xl text-[9px] font-black uppercase tracking-widest border active:scale-95 transition-all flex items-center justify-center gap-2 shadow-sm ${isEditing ? 'bg-amber-500/10 text-amber-500 border-amber-500/20' : 'bg-red-500/10 text-red-500 border-red-500/20'}`}
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                {isEditing ? 'Abandonar edición' : 'Limpiar Todo'}
+                            </button>
+                        )}
 
                         {showInstallButton && onInstallApp && (
-                            <div className="mt-2 p-2.5 bg-gradient-to-r from-gray-900 to-gray-800 rounded-2xl flex items-center justify-between shadow-xl animate-pulse-slow border border-gray-700 max-w-md">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shrink-0 shadow-inner p-1">
-                                        <img src={businessLogo} alt="App Icon" className="w-full h-full object-contain" />
-                                    </div>
-                                    <div className="text-white">
-                                        <p className="text-[10px] font-black uppercase tracking-tight leading-none mb-0.5">Versión App Disponible</p>
-                                        <p className="text-[9px] font-medium text-gray-400">Instala para uso offline</p>
-                                    </div>
-                                </div>
-                                <button onClick={onInstallApp} className="bg-[#F99D1C] text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest active:scale-95 transition-all shadow-lg">Instalar</button>
-                            </div>
+                            <button onClick={onInstallApp} className="flex-grow sm:flex-initial h-10 bg-brand text-black px-6 rounded-xl text-[9px] font-black uppercase tracking-widest active:scale-95 transition-all shadow-lg flex items-center justify-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                                Instalar App
+                            </button>
                         )}
                     </div>
                 </div>
             )}
 
-            {/* Categorías */}
-            <div className="shrink-0 bg-black/40 backdrop-blur-md shadow-lg z-20">
-                <div className="max-w-7xl mx-auto flex flex-wrap py-4 px-4 gap-2 md:justify-center overflow-y-auto max-h-[120px] scrollbar-hide">
+            {/* Categorías en Carrusel Horizontal */}
+            <div className="shrink-0 bg-black/40 backdrop-blur-md shadow-lg z-20 border-b border-white/5">
+                <div className="max-w-7xl mx-auto flex flex-nowrap py-3 px-4 gap-2 overflow-x-auto scrollbar-hide">
                     {menu.map(cat => (
                         <button
                             key={cat.title}
                             onClick={() => scrollToCategory(cat.title)}
                             className={`flex-shrink-0 px-5 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${activeCategory === cat.title
-                                ? 'bg-brand text-black shadow-[0_8px_20px_var(--brand-shadow-color)] scale-105'
-                                : 'bg-white/5 text-white/50 border border-white/5'
+                                ? 'bg-brand text-black shadow-[0_4px_15px_var(--brand-shadow-color)] scale-105'
+                                : 'bg-white/5 text-white/40 border border-white/5'
                                 }`}
                         >
                             {cat.title}

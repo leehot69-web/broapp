@@ -127,18 +127,18 @@ const ReportsScreen: React.FC<ReportsScreenProps> = ({ reports, onGoToTables, on
                     </button>
                 </div>
 
-                <div className="flex-grow overflow-y-auto p-6 space-y-8 scrollbar-hide py-8">
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="bg-brand/10 border border-brand/20 p-6 rounded-[2rem] text-white shadow-2xl bro-paper-card">
-                            <p className="text-[10px] font-black uppercase text-brand mb-2 tracking-widest opacity-60">Cobrado (Caja)</p>
-                            <p className="text-4xl font-black bro-gradient-text tracking-tighter italic leading-none mb-2">${totalPaid.toFixed(2)}</p>
+                <div className="flex-grow overflow-y-auto p-4 space-y-6 scrollbar-hide py-6">
+                    <div className="grid grid-cols-2 gap-3 px-2">
+                        <div className="bg-brand/10 border border-brand/20 p-4 rounded-[1.5rem] text-white shadow-xl bro-paper-card">
+                            <p className="text-[9px] font-black uppercase text-brand mb-1 tracking-widest opacity-60">Cobrado</p>
+                            <p className="text-3xl font-black bro-gradient-text tracking-tighter italic leading-none mb-1">${totalPaid.toFixed(2)}</p>
                             {isToday && totalPaid === 0 && filteredByWaiterAndDate.some(r => r.isShiftClosed && r.date === selectedDate) && (
-                                <p className="text-[9px] font-black bg-green-500/20 text-green-500 inline-block px-3 py-1 rounded-full uppercase tracking-widest">Turno Cerrado</p>
+                                <p className="text-[8px] font-black bg-green-500/20 text-green-500 inline-block px-2 py-0.5 rounded-full uppercase tracking-widest">Cerrado</p>
                             )}
                         </div>
-                        <div className="bg-white/5 border border-white/5 p-6 rounded-[2rem] text-white shadow-2xl bro-paper-card">
-                            <p className="text-[10px] font-black uppercase text-gray-500 mb-2 tracking-widest opacity-60">Por Cobrar</p>
-                            <p className="text-4xl font-black text-white tracking-tighter italic leading-none">${totalPending.toFixed(2)}</p>
+                        <div className="bg-white/5 border border-white/5 p-4 rounded-[1.5rem] text-white shadow-xl bro-paper-card">
+                            <p className="text-[9px] font-black uppercase text-gray-500 mb-1 tracking-widest opacity-60">Pendiente</p>
+                            <p className="text-3xl font-black text-white tracking-tighter italic leading-none">${totalPending.toFixed(2)}</p>
                         </div>
                     </div>
 
@@ -155,22 +155,21 @@ const ReportsScreen: React.FC<ReportsScreenProps> = ({ reports, onGoToTables, on
                             </div>
                         ) : (
                             filteredByWaiterAndDate.map(report => (
-                                <div key={report.id} onClick={() => setActiveSale(report)} className={`bg-card p-5 rounded-[2rem] border ${report.isShiftClosed && isToday ? 'border-white/5 opacity-50' : 'border-white/5'} flex justify-between items-center active:scale-[0.98] transition-all cursor-pointer shadow-xl bro-paper-card group`}>
-                                    <div className="flex gap-4 items-center">
-                                        <div className={`w-1.5 h-12 rounded-full ${getStatusColor(report.notes, report.isShiftClosed && isToday)} shadow-[0_0_10px_currentColor]`}></div>
+                                <div key={report.id} onClick={() => setActiveSale(report)} className={`bg-card p-4 rounded-[1.5rem] border ${report.isShiftClosed && isToday ? 'border-white/5 opacity-50' : 'border-white/5'} flex justify-between items-center active:scale-[0.98] transition-all cursor-pointer shadow-lg bro-paper-card group`}>
+                                    <div className="flex gap-3 items-center">
+                                        <div className={`w-1 h-10 rounded-full ${getStatusColor(report.notes, report.isShiftClosed && isToday)} shadow-[0_0_10px_currentColor]`}></div>
                                         <div>
-                                            <p className={`font-black text-base uppercase tracking-tight italic leading-none mb-2 ${report.notes === 'ANULADO' ? 'text-gray-700 line-through' : 'text-white'}`}>{report.customerName || (report.tableNumber > 0 ? `Mesa ${report.tableNumber}` : 'Pedido')}</p>
+                                            <p className={`font-black text-sm uppercase tracking-tight italic leading-none mb-1.5 ${report.notes === 'ANULADO' ? 'text-gray-700 line-through' : 'text-white'}`}>{report.customerName || (report.tableNumber > 0 ? `Mesa ${report.tableNumber}` : 'Pedido')}</p>
                                             <div className="flex gap-2 items-center flex-wrap">
-                                                <span className={`text-[9px] font-black px-3 py-1 rounded-full uppercase tracking-widest ${getBadgeClass(report.notes, report.isShiftClosed && isToday)}`}>
-                                                    {report.isShiftClosed && report.notes !== 'PENDIENTE' && isToday ? 'Turno Cerrado' : report.notes}
+                                                <span className={`text-[8px] font-black px-2 py-0.5 rounded-full uppercase tracking-widest ${getBadgeClass(report.notes, report.isShiftClosed && isToday)}`}>
+                                                    {report.isShiftClosed && report.notes !== 'PENDIENTE' && isToday ? 'Cerrado' : report.notes}
                                                 </span>
-                                                <span className="text-[10px] font-black text-gray-600 bg-white/5 px-2 py-0.5 rounded-lg border border-white/5">{report.time || ''}</span>
+                                                <span className="text-[9px] font-black text-gray-600 bg-white/5 px-1.5 py-0.5 rounded-lg">{report.time || ''}</span>
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="text-right">
-                                        <p className={`font-black text-2xl tracking-tighter italic leading-none ${report.notes === 'ANULADO' || (report.isShiftClosed && isToday) ? 'text-gray-700' : 'text-white'}`}>${report.total.toFixed(2)}</p>
-                                        <p className="text-[10px] font-black text-gray-600 mt-1 uppercase tracking-widest">Bs. {(report.total * exchangeRate).toFixed(2)}</p>
+                                    <div className="text-right shrink-0">
+                                        <p className={`font-black text-xl tracking-tighter italic leading-none ${report.notes === 'ANULADO' || (report.isShiftClosed && isToday) ? 'text-gray-700' : 'text-white'}`}>${report.total.toFixed(2)}</p>
                                     </div>
                                 </div>
                             ))

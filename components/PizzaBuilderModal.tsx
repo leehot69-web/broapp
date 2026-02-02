@@ -211,12 +211,12 @@ const PizzaBuilderModal: React.FC<PizzaBuilderModalProps> = ({
                                         key={s}
                                         onClick={() => setSize(s)}
                                         className={`p-4 rounded-2xl border-2 transition-all ${size === s
-                                            ? 'border-brand bg-brand/10 text-brand shadow-lg'
+                                            ? 'border-brand bg-brand text-black shadow-xl scale-105'
                                             : 'border-white/5 bg-white/5 text-gray-500 hover:border-white/20'
                                             }`}
                                     >
                                         <div className="text-xl font-black">${pizzaBasePrices[s]}</div>
-                                        <div className="text-[9px] font-black uppercase tracking-widest mt-1 opacity-70">{s}</div>
+                                        <div className={`text-[9px] font-black uppercase tracking-widest mt-1 ${size === s ? 'text-black/60' : 'opacity-70'}`}>{s}</div>
                                     </button>
                                 ))}
                             </div>
@@ -343,32 +343,32 @@ const PizzaBuilderModal: React.FC<PizzaBuilderModalProps> = ({
                                                 key={ing.name}
                                                 onClick={() => toggleIngredient(ing)}
                                                 className={`p-4 rounded-2xl border-2 transition-all text-left relative overflow-hidden ${isSelected
-                                                    ? `${categoryColors[ing.category].border} ${categoryColors[ing.category].bg} shadow-lg shadow-black/20`
+                                                    ? `border-brand bg-brand shadow-xl scale-[1.02]`
                                                     : 'border-white/5 bg-white/[0.03] hover:border-white/20'
                                                     }`}
                                             >
                                                 <div className="flex items-center justify-between mb-1.5">
-                                                    <span className={`text-[11px] font-black uppercase tracking-tight ${isSelected ? 'text-white' : 'text-gray-500'}`}>
+                                                    <span className={`text-[11px] font-black uppercase tracking-tight ${isSelected ? 'text-black' : 'text-gray-500'}`}>
                                                         {ing.name}
                                                     </span>
                                                     {isSelected && (
-                                                        <span className="text-[9px] px-2 py-0.5 rounded-md bg-brand text-black font-black">
+                                                        <span className="text-[9px] px-2 py-0.5 rounded-md bg-black text-brand font-black">
                                                             {selection.half === 'full' ? 'TODO' : selection.half === 'left' ? 'IZQ' : 'DER'}
                                                         </span>
                                                     )}
                                                 </div>
-                                                <div className="text-[10px] font-black tracking-widest">
+                                                <div className={`text-[10px] font-black tracking-widest ${isSelected ? 'text-black/60' : 'text-gray-400'}`}>
                                                     {isDefault ? (
-                                                        <span className="text-brand">INCLUIDO</span>
+                                                        <span className={isSelected ? 'text-black' : 'text-brand'}>INCLUIDO</span>
                                                     ) : (
-                                                        <span className="text-gray-400">+${price.toFixed(2)}</span>
+                                                        <span>+${price.toFixed(2)}</span>
                                                     )}
                                                 </div>
 
                                                 {/* Indicador visual de selección en la carta */}
                                                 {isSelected && (
                                                     <div className="absolute bottom-0 right-0 w-8 h-8 flex items-end justify-end p-1">
-                                                        <svg className="w-4 h-4 text-brand" fill="currentColor" viewBox="0 0 20 20">
+                                                        <svg className="w-4 h-4 text-black" fill="currentColor" viewBox="0 0 20 20">
                                                             <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                                         </svg>
                                                     </div>
@@ -399,12 +399,12 @@ const PizzaBuilderModal: React.FC<PizzaBuilderModalProps> = ({
                                                     key={opt.name}
                                                     onClick={() => handleToggleModifier(group, opt)}
                                                     className={`p-4 rounded-2xl border-2 transition-all text-left ${isSelected
-                                                        ? 'border-brand bg-brand/10 text-white shadow-lg'
+                                                        ? 'border-brand bg-brand text-black shadow-xl scale-[1.02]'
                                                         : 'border-white/5 bg-white/[0.03] text-gray-500 hover:border-white/20'
                                                         }`}
                                                 >
                                                     <div className="font-black text-[11px] uppercase truncate">{opt.name}</div>
-                                                    <div className="text-[10px] font-bold text-gray-400 mt-1">
+                                                    <div className={`text-[10px] font-bold mt-1 ${isSelected ? 'text-black/60' : 'text-gray-400'}`}>
                                                         {opt.price > 0 ? `+$${opt.price.toFixed(2)}` : 'GRATIS'}
                                                     </div>
                                                 </button>

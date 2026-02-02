@@ -256,10 +256,10 @@ const ProductModifierModal: React.FC<ProductModifierModalProps> = ({ item, allMo
                                                 return (
                                                     <div
                                                         key={option.name}
-                                                        className={`flex items-center justify-between p-4 rounded-2xl transition-all border-2 ${isChecked ? 'bg-brand/10 border-brand/50 shadow-lg' : 'bg-white/5 border-white/5 hover:border-white/20'}`}
+                                                        className={`flex items-center justify-between p-4 rounded-2xl transition-all border-2 ${isChecked ? 'bg-brand border-brand shadow-xl' : 'bg-white/5 border-white/5 hover:border-white/20'}`}
                                                     >
                                                         <div className="flex flex-col">
-                                                            <span className={`font-black uppercase text-sm ${isChecked ? 'text-white' : 'text-gray-400'}`}>{option.name}</span>
+                                                            <span className={`font-black uppercase text-sm ${isChecked ? 'text-black' : 'text-gray-400'}`}>{option.name}</span>
                                                             <div className="flex gap-2 items-center mt-1">
                                                                 {isExtraCharge && displayPrice > 0 && (
                                                                     <span className="text-[10px] font-black text-red-400 bg-red-400/10 px-2 py-0.5 rounded border border-red-400/20">
@@ -267,7 +267,7 @@ const ProductModifierModal: React.FC<ProductModifierModalProps> = ({ item, allMo
                                                                     </span>
                                                                 )}
                                                                 {isIncluded && (
-                                                                    <span className="text-[10px] font-black text-green-400 bg-green-400/10 px-2 py-0.5 rounded border border-green-400/20">
+                                                                    <span className={`text-[10px] font-black px-2 py-0.5 rounded border ${isChecked ? 'text-black bg-black/10 border-black/10' : 'text-green-400 bg-green-400/10 border-green-400/20'}`}>
                                                                         INCLUIDO
                                                                     </span>
                                                                 )}
@@ -275,15 +275,15 @@ const ProductModifierModal: React.FC<ProductModifierModalProps> = ({ item, allMo
                                                         </div>
                                                         <div className="flex items-center gap-3">
                                                             {count > 0 && (
-                                                                <button type="button" onClick={() => handleRemoveOption(group, option)} className="w-10 h-10 flex items-center justify-center bg-black/40 rounded-xl border border-white/10 text-white font-black active:scale-90 transition-all text-xl">-</button>
+                                                                <button type="button" onClick={() => handleRemoveOption(group, option)} className="w-10 h-10 flex items-center justify-center bg-black/20 rounded-xl border border-black/10 text-black font-black active:scale-90 transition-all text-xl">-</button>
                                                             )}
                                                             {count > 0 && (
-                                                                <span className="font-black text-brand w-6 text-center text-lg">{count}</span>
+                                                                <span className="font-black text-black w-6 text-center text-lg">{count}</span>
                                                             )}
                                                             <button
                                                                 type="button"
                                                                 onClick={() => handleAddOption(group, option)}
-                                                                className={`w-10 h-10 flex items-center justify-center rounded-xl border font-black active:scale-90 transition-all text-xl ${count > 0 ? 'bg-brand text-black border-black/10' : 'bg-white/10 text-white border-white/10'}`}
+                                                                className={`w-10 h-10 flex items-center justify-center rounded-xl border font-black active:scale-90 transition-all text-xl ${count > 0 ? 'bg-black text-white border-black/20' : 'bg-white/10 text-white border-white/10'}`}
                                                             >
                                                                 +
                                                             </button>
@@ -296,10 +296,10 @@ const ProductModifierModal: React.FC<ProductModifierModalProps> = ({ item, allMo
                                             return (
                                                 <label
                                                     key={option.name}
-                                                    className={`flex items-center justify-between p-4 rounded-2xl cursor-pointer transition-all border-2 ${isChecked ? 'bg-brand/10 border-brand/50 shadow-lg' : 'bg-white/5 border-white/5 hover:border-white/20'}`}
+                                                    className={`flex items-center justify-between p-4 rounded-2xl cursor-pointer transition-all border-2 ${isChecked ? 'bg-brand border-brand shadow-xl' : 'bg-white/5 border-white/5 hover:border-white/20'}`}
                                                 >
                                                     <div className="flex flex-col">
-                                                        <span className={`font-black uppercase text-sm ${isChecked ? 'text-white' : 'text-gray-400'}`}>{option.name}</span>
+                                                        <span className={`font-black uppercase text-sm ${isChecked ? 'text-black' : 'text-gray-400'}`}>{option.name}</span>
                                                         <div className="flex gap-2 items-center mt-1">
                                                             {isExtraCharge && displayPrice > 0 && (
                                                                 <span className="text-[10px] font-black text-red-400 bg-red-400/10 px-2 py-0.5 rounded border border-red-400/20">
@@ -307,15 +307,15 @@ const ProductModifierModal: React.FC<ProductModifierModalProps> = ({ item, allMo
                                                                 </span>
                                                             )}
                                                             {isIncluded && (
-                                                                <span className="text-[10px] font-black text-green-400 bg-green-400/10 px-2 py-0.5 rounded border border-green-400/20">
+                                                                <span className={`text-[10px] font-black px-2 py-0.5 rounded border ${isChecked ? 'text-black bg-black/10 border-black/10' : 'text-green-400 bg-green-400/10 border-green-400/20'}`}>
                                                                     INCLUIDO
                                                                 </span>
                                                             )}
                                                         </div>
                                                     </div>
                                                     <div className="flex items-center gap-4 text-right">
-                                                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${isChecked ? 'border-brand bg-brand scale-110 shadow-[0_0_10px_rgba(255,215,0,0.4)]' : 'border-white/20'}`}>
-                                                            {isChecked && <div className="w-2.5 h-2.5 bg-black rounded-full"></div>}
+                                                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${isChecked ? 'border-black bg-black scale-110 shadow-lg' : 'border-white/20'}`}>
+                                                            {isChecked && <div className="w-2.5 h-2.5 bg-brand rounded-full"></div>}
                                                         </div>
                                                         <input
                                                             type={group.selectionType === 'single' ? 'radio' : 'checkbox'}

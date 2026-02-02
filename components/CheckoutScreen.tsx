@@ -56,19 +56,19 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
                 )}
             </header>
 
-            <div className="flex-grow overflow-y-auto p-6 space-y-8 py-8 scrollbar-hide">
-                <div className="bg-card p-8 rounded-[2rem] shadow-2xl border border-white/5 space-y-6 bro-paper-card relative overflow-hidden">
+            <div className="flex-grow overflow-y-auto p-4 space-y-4 py-4 scrollbar-hide">
+                <div className="bg-card p-4 rounded-2xl shadow-xl border border-white/5 space-y-3 bro-paper-card relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-32 h-32 bg-brand/5 rounded-bl-[100%] pointer-events-none"></div>
-                    <div className="flex items-center gap-4 mb-2">
-                        <div className="w-12 h-12 rounded-2xl bg-brand/10 flex items-center justify-center text-brand border border-brand/20 shadow-inner">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                    <div className="flex items-center gap-2 mb-0">
+                        <div className="w-9 h-9 rounded-lg bg-brand/10 flex items-center justify-center text-brand border border-brand/20 shadow-inner">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
                         </div>
-                        <h2 className="text-xl font-black text-white uppercase italic tracking-tighter">Identificación</h2>
+                        <h2 className="text-base font-black text-white uppercase italic tracking-tighter">Identificación</h2>
                     </div>
 
-                    <div className="space-y-4">
+                    <div className="space-y-3">
                         <div>
-                            <label className="block text-[10px] font-black text-gray-500 uppercase tracking-[0.3em] mb-2 ml-1">Referencia o Mesa <span className="text-brand">*</span></label>
+                            <label className="block text-[10px] font-black text-gray-500 uppercase tracking-[0.3em] mb-1 ml-1">Referencia o Mesa <span className="text-brand">*</span></label>
                             <input
                                 type="text"
                                 value={customerDetails.name}
@@ -92,13 +92,13 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
                     </div>
                 </div>
 
-                <div className="bg-card p-8 rounded-[2rem] shadow-2xl border border-white/5 space-y-6 bro-paper-card relative overflow-hidden">
+                <div className="bg-card p-6 rounded-[1.5rem] shadow-xl border border-white/5 space-y-4 bro-paper-card relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-32 h-32 bg-green-500/5 rounded-bl-[100%] pointer-events-none"></div>
-                    <div className="flex items-center gap-4 mb-2">
-                        <div className="w-12 h-12 rounded-2xl bg-green-500/10 flex items-center justify-center text-green-500 border border-green-500/20 shadow-inner">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>
+                    <div className="flex items-center gap-3 mb-1">
+                        <div className="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center text-green-500 border border-green-500/20 shadow-inner">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>
                         </div>
-                        <h2 className="text-xl font-black text-white uppercase italic tracking-tighter">Método de Pago</h2>
+                        <h2 className="text-lg font-black text-white uppercase italic tracking-tighter">Método de Pago</h2>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
@@ -106,9 +106,9 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
                             <button
                                 key={method}
                                 onClick={() => handleChange('paymentMethod', method)}
-                                className={`p-5 rounded-[22px] border text-[10px] font-black uppercase tracking-widest transition-all ${customerDetails.paymentMethod === method
-                                    ? 'bg-brand text-black border-brand shadow-xl shadow-brand/20 scale-[1.02]'
-                                    : 'bg-black/40 text-gray-400 border-white/10 hover:bg-white/5 active:scale-95'
+                                className={`p-4 rounded-xl border text-[9px] font-black uppercase tracking-widest transition-all ${customerDetails.paymentMethod === method
+                                    ? 'bg-brand text-black border-brand shadow-lg scale-[1.02]'
+                                    : 'bg-black/40 text-gray-500 border-white/10 hover:bg-white/5 active:scale-95'
                                     }`}
                             >
                                 {method}
@@ -118,12 +118,12 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
                 </div>
             </div>
 
-            <div className="bg-black/60 backdrop-blur-3xl p-8 shadow-[0_-20px_60px_rgba(0,0,0,0.8)] z-20 flex-shrink-0 border-t border-white/10 rounded-t-[2.5rem]">
-                <div className="flex justify-between items-center mb-8 px-2">
-                    <span className="text-gray-500 font-black uppercase tracking-[0.3em] text-[10px]">A Cobrar</span>
+            <div className="bg-black/60 backdrop-blur-3xl p-6 shadow-[0_-20px_60px_rgba(0,0,0,0.8)] z-20 flex-shrink-0 border-t border-white/10 rounded-t-[2.5rem]">
+                <div className="flex justify-between items-center mb-6 px-2">
+                    <span className="text-gray-500 font-black uppercase tracking-[0.3em] text-[10px]">Total</span>
                     <div className="text-right">
-                        <span className="font-black text-4xl text-white leading-none tracking-tighter bro-gradient-text italic">${total.toFixed(2)}</span>
-                        <p className="text-[11px] font-black text-gray-500 uppercase tracking-widest mt-1">Bs. {(total * activeRate).toFixed(2)}</p>
+                        <span className="font-black text-3xl text-white leading-none tracking-tighter bro-gradient-text italic">${total.toFixed(2)}</span>
+                        <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest mt-1">Bs. {(total * activeRate).toFixed(2)}</p>
                     </div>
                 </div>
 
