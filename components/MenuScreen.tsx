@@ -122,7 +122,7 @@ const MenuScreen: React.FC<MenuScreenProps> = ({
 
             {/* Listado de Productos */}
             <div className={`flex-grow overflow-y-auto scroll-smooth scrollbar-hide ${!isPosMode ? 'pb-24' : 'pb-4'}`}>
-                <div className="max-w-7xl mx-auto p-4 lg:p-8">
+                <div className="max-w-full mx-auto px-2 py-5 lg:p-8">
                     {menu.map(category => (
                         <div key={category.title} ref={el => { categoryRefs.current[category.title] = el; }} className="mb-12">
                             <h2 className="text-[11px] font-black text-brand uppercase tracking-[0.3em] mb-6 px-1 border-l-4 border-brand pl-3">{category.title}</h2>

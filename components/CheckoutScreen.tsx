@@ -56,7 +56,7 @@ const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
                 )}
             </header>
 
-            <div className="flex-grow overflow-y-auto p-4 space-y-4 py-4 scrollbar-hide">
+            <div className="flex-grow overflow-y-auto p-2 space-y-4 py-4 scrollbar-hide">
                 <div className="bg-card p-4 rounded-2xl shadow-xl border border-white/5 space-y-3 bro-paper-card relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-32 h-32 bg-brand/5 rounded-bl-[100%] pointer-events-none"></div>
                     <div className="flex items-center gap-2 mb-0">

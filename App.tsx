@@ -546,8 +546,8 @@ function App() {
 
   if (isAppReady && (!session.waiter || !session.targetNumber)) {
     return (
-      <div className="h-full w-full bg-black p-2 box-border theme-bro">
-        <div className="h-full w-full bg-card rounded-[38px] flex flex-col relative overflow-hidden border border-white/5 bro-paper-card" style={{ backgroundColor: 'var(--page-bg-color)' }}>
+      <div className="h-full w-full bg-black p-0 box-border theme-bro">
+        <div className="h-full w-full bg-card flex flex-col relative overflow-hidden border-x border-t border-white/5 bro-paper-card" style={{ backgroundColor: 'var(--page-bg-color)' }}>
           <div className="h-full w-full flex flex-col items-center justify-center p-8 overflow-y-auto">
             <div className="w-24 h-24 bg-black/40 rounded-[2.5rem] flex items-center justify-center mb-8 shadow-2xl border border-white/5 p-4 bro-shadow">
               <img src={businessLogo} alt="Logo" className="w-full h-full object-contain drop-shadow-2xl" />
@@ -589,10 +589,10 @@ function App() {
 
   return (
     <>
-      <div className="h-full w-full bg-black p-2 box-border theme-bro">
-        <div className="h-full w-full bg-black rounded-[38px] flex flex-col relative overflow-hidden bro-paper-card border border-white/5" style={{ backgroundColor: 'var(--page-bg-color)' }}>
+      <div className="h-full w-full bg-black theme-bro">
+        <div className="h-full w-full bg-black flex flex-col relative overflow-hidden bro-paper-card" style={{ backgroundColor: 'var(--page-bg-color)' }}>
           {/* Header Unificado: Logo + Nav en una sola línea */}
-          <div className="bg-black/80 backdrop-blur-xl border-b border-white/5 px-4 py-3 flex justify-between items-center shrink-0 z-20">
+          <div className="bg-black/80 backdrop-blur-xl border-b border-white/5 px-2 py-3 flex justify-between items-center shrink-0 z-20">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-full bg-white/10 p-1 border border-white/10 shrink-0">
                 <img src={businessLogo} alt="Logo" className="w-full h-full object-contain" />

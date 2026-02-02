@@ -127,7 +127,7 @@ const ReportsScreen: React.FC<ReportsScreenProps> = ({ reports, onGoToTables, on
                     </button>
                 </div>
 
-                <div className="flex-grow overflow-y-auto p-4 space-y-6 scrollbar-hide py-6">
+                <div className="flex-grow overflow-y-auto p-2 space-y-4 scrollbar-hide py-4">
                     <div className="grid grid-cols-2 gap-3 px-2">
                         <div className="bg-brand/10 border border-brand/20 p-4 rounded-[1.5rem] text-white shadow-xl bro-paper-card">
                             <p className="text-[9px] font-black uppercase text-brand mb-1 tracking-widest opacity-60">Cobrado</p>

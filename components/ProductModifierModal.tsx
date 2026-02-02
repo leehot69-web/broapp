@@ -176,7 +176,7 @@ const ProductModifierModal: React.FC<ProductModifierModalProps> = ({ item, allMo
             onClick={onClose}
         >
             <div
-                className="bg-card rounded-t-[2.5rem] sm:rounded-[2.5rem] shadow-2xl w-full max-w-md max-h-[95vh] flex flex-col transform transition-transform border border-white/10 bro-paper-card overflow-hidden"
+                className="bg-card rounded-t-[2rem] sm:rounded-[2rem] shadow-2xl w-full max-w-2xl max-h-[100vh] flex flex-col transform transition-transform border-x border-t border-white/10 bro-paper-card overflow-hidden"
                 onClick={(e) => e.stopPropagation()}
             >
                 {/* Header Image or Title */}

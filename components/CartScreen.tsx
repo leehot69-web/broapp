@@ -92,7 +92,7 @@ const CartScreen: React.FC<CartScreenProps> = (props) => {
                 </div>
             </header>
 
-            <div className="flex-grow overflow-y-auto p-6 space-y-6 scrollbar-hide py-8">
+            <div className="flex-grow overflow-y-auto px-3 space-y-4 scrollbar-hide py-6">
                 {cart.map(item => {
                     const pizzaModPrice = item.pizzaConfig ? item.pizzaConfig.ingredients.reduce((acc, sel) => acc + (sel.ingredient.prices[item.pizzaConfig!.size] / (sel.half === 'full' ? 1 : 2)), 0) : 0;
                     const traditionalModsPrice = item.selectedModifiers.reduce((s, m) => s + m.option.price, 0);
@@ -197,7 +197,7 @@ const CartScreen: React.FC<CartScreenProps> = (props) => {
                 })}
             </div>
 
-            <div className="flex-shrink-0 bg-black/60 backdrop-blur-3xl p-6 shadow-[0_-20px_60px_rgba(0,0,0,0.8)] z-20 border-t border-white/10 rounded-t-[2.5rem]">
+            <div className="flex-shrink-0 bg-black/60 backdrop-blur-3xl p-4 shadow-[0_-20px_60px_rgba(0,0,0,0.8)] z-20 border-t border-white/10 rounded-t-[2.5rem]">
                 <div className="flex justify-between items-center mb-6 px-2">
                     <span className="text-gray-500 font-black uppercase tracking-[0.3em] text-[9px]">Total</span>
                     <div className="text-right">

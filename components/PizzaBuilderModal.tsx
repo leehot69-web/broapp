@@ -177,7 +177,7 @@ const PizzaBuilderModal: React.FC<PizzaBuilderModalProps> = ({
     return (
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/90 backdrop-blur-xl animate-fadeIn p-0 sm:p-4">
             <div
-                className="w-full max-w-lg bg-card rounded-t-[2.5rem] sm:rounded-[2.5rem] max-h-[95vh] flex flex-col transform transition-transform border border-white/10 bro-paper-card overflow-hidden"
+                className="w-full max-w-2xl bg-card rounded-t-[2rem] sm:rounded-[2rem] max-h-[100vh] flex flex-col transform transition-transform border-x border-t border-white/10 bro-paper-card overflow-hidden"
             >
                 {/* Header */}
                 <div className="p-6 border-b border-white/5 flex items-center justify-between bg-black/20">
