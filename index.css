@@ -1,0 +1,117 @@
+:root {
+    --brand-color: #FFD700;
+    --brand-color-dark: #B8860B;
+    --brand-shadow-color: rgba(255, 215, 0, 0.2);
+    --bg-dark: #0a0a0a;
+    --bg-card: #151515;
+    --text-white: #ffffff;
+    --text-muted: #a0a0a0;
+}
+
+body.theme-bro {
+    background-color: var(--bg-dark);
+    color: var(--text-white);
+    background-image:
+        radial-gradient(circle at 50% 0%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
+        url("https://www.transparenttextures.com/patterns/dark-matter.png");
+}
+
+.theme-bro .bg-card {
+    background-color: var(--bg-card);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 215, 0, 0.1);
+}
+
+.theme-bro .text-brand {
+    color: var(--brand-color);
+}
+
+.theme-bro .bg-brand {
+    background-color: var(--brand-color);
+    color: #000;
+}
+
+.theme-bro .border-brand {
+    border-color: var(--brand-color);
+}
+
+/* Glassmorphism for the menu categories */
+.category-pill {
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+}
+
+.category-pill.active {
+    background: var(--brand-color);
+    color: #000;
+    box-shadow: 0 4px 15px var(--brand-shadow-color);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.4s ease forwards;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #0a0a0a;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--brand-color);
+}
+
+/* App-specific utility classes */
+.bro-shadow {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.bro-gradient-text {
+    background: linear-gradient(135deg, #FFD700 0%, #B8860B 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.bro-paper-card {
+    background: white;
+    color: black;
+    padding: 20px;
+    border-radius: 4px;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.1), 0 2px 5px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.bro-paper-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url("https://www.transparenttextures.com/patterns/handmade-paper.pattern");
+    opacity: 0.5;
+    pointer-events: none;
+}

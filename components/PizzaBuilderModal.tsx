@@ -1,0 +1,469 @@
+
+import React, { useState, useMemo } from 'react';
+import { MenuItem, PizzaSize, PizzaIngredient, PizzaHalf, PizzaIngredientSelection, PizzaConfiguration, CartItem, SelectedModifier, ModifierGroup } from '../types';
+
+interface PizzaBuilderModalProps {
+    item: MenuItem;
+    onClose: () => void;
+    onSubmit: (item: MenuItem, pizzaConfig: PizzaConfiguration, quantity: number, extraModifiers: SelectedModifier[]) => void;
+    initialCartItem?: CartItem | null;
+    activeRate: number;
+    isSpecialPizza?: boolean;
+    defaultIngredients?: string[];
+    pizzaIngredients: PizzaIngredient[];
+    pizzaBasePrices: Record<string, number>;
+    allModifierGroups: ModifierGroup[];
+}
+
+const PizzaBuilderModal: React.FC<PizzaBuilderModalProps> = ({
+    item,
+    onClose,
+    onSubmit,
+    initialCartItem,
+    activeRate,
+    isSpecialPizza = false,
+    defaultIngredients = [],
+    pizzaIngredients,
+    pizzaBasePrices,
+    allModifierGroups
+}) => {
+    // Estados
+    const [size, setSize] = useState<PizzaSize>(
+        initialCartItem?.pizzaConfig?.size || (isSpecialPizza ? 'Familiar' : 'Mediana')
+    );
+    const [selectedHalf, setSelectedHalf] = useState<PizzaHalf>('full');
+    const [ingredients, setIngredients] = useState<PizzaIngredientSelection[]>(() => {
+        if (initialCartItem?.pizzaConfig?.ingredients) {
+            return initialCartItem.pizzaConfig.ingredients;
+        }
+        // Para pizzas especiales, agregar ingredientes por defecto como "full"
+        if (isSpecialPizza && defaultIngredients.length > 0) {
+            return defaultIngredients.map(name => {
+                const ing = pizzaIngredients.find(i => i.name === name);
+                if (ing) {
+                    return { ingredient: ing, half: 'full' as PizzaHalf };
+                }
+                return null;
+            }).filter(Boolean) as PizzaIngredientSelection[];
+        }
+        return [];
+    });
+
+    const [extraModifiers, setExtraModifiers] = useState<SelectedModifier[]>(() => {
+        if (initialCartItem) {
+            // Filtrar los que no son de pizza (tamaño e ingredientes que agregamos manualmente en handleAddPizzaToCart)
+            const pizzaSpecificGroups = ['Tamaño', '🍕 TODA LA PIZZA', '◐ MITAD IZQUIERDA', '◑ MITAD DERECHA', '✓ INGREDIENTES BASE'];
+            return initialCartItem.selectedModifiers.filter(m => !pizzaSpecificGroups.includes(m.groupTitle));
+        }
+        return [];
+    });
+
+    const [quantity, setQuantity] = useState(initialCartItem?.quantity || 1);
+
+    // Grupos de modificadores asignados a este producto
+    const assignedModifierGroups = useMemo(() => {
+        return (item.modifierGroupTitles || []).map(titleOrAssignment => {
+            const groupTitle = typeof titleOrAssignment === 'string' ? titleOrAssignment : titleOrAssignment.group;
+            const displayTitle = typeof titleOrAssignment === 'string' ? titleOrAssignment : titleOrAssignment.label;
+            const group = allModifierGroups.find(g => g.title === groupTitle);
+            return group ? { ...group, displayTitle } : null;
+        }).filter(Boolean) as (ModifierGroup & { displayTitle: string })[];
+    }, [item.modifierGroupTitles, allModifierGroups]);
+
+    const handleToggleModifier = (group: ModifierGroup & { displayTitle: string }, option: { name: string, price: number }) => {
+        if (group.selectionType === 'single') {
+            setExtraModifiers(prev => [
+                ...prev.filter(m => m.groupTitle !== group.displayTitle),
+                { groupTitle: group.displayTitle, option }
+            ]);
+        } else {
+            setExtraModifiers(prev => {
+                const exists = prev.find(m => m.groupTitle === group.displayTitle && m.option.name === option.name);
+                if (exists) {
+                    return prev.filter(m => !(m.groupTitle === group.displayTitle && m.option.name === option.name));
+                } else {
+                    return [...prev, { groupTitle: group.displayTitle, option }];
+                }
+            });
+        }
+    };
+
+    // Calcular precio total
+    const totalPrice = useMemo(() => {
+        let basePrice = isSpecialPizza ? item.price : pizzaBasePrices[size];
+
+        // Sumar ingredientes
+        ingredients.forEach(sel => {
+            if (isSpecialPizza && defaultIngredients.includes(sel.ingredient.name)) {
+                return;
+            }
+            const ingPrice = sel.ingredient.prices[size as PizzaSize];
+            if (sel.half === 'left' || sel.half === 'right') {
+                basePrice += ingPrice / 2;
+            } else {
+                basePrice += ingPrice;
+            }
+        });
+
+        // Sumar modificadores extra
+        const modsPrice = extraModifiers.reduce((sum, mod) => sum + mod.option.price, 0);
+
+        // Si es familiar en pizza especial, sumamos el costo extra si hay
+        // En BRO, pusimos grupos de tamaño que tienen precio.
+
+        return (basePrice + modsPrice) * quantity;
+    }, [size, ingredients, quantity, isSpecialPizza, item.price, defaultIngredients, extraModifiers, pizzaBasePrices]);
+
+    // Agrupar ingredientes por categoría
+    const groupedIngredients = useMemo(() => {
+        const grouped: Record<string, PizzaIngredient[]> = { A: [], B: [], C: [] };
+        pizzaIngredients.forEach(ing => {
+            if (!grouped[ing.category]) grouped[ing.category] = [];
+            grouped[ing.category].push(ing);
+        });
+        return grouped;
+    }, [pizzaIngredients]);
+
+    // Verificar si un ingrediente está seleccionado
+    const getIngredientSelection = (ingredientName: string): PizzaIngredientSelection | undefined => {
+        return ingredients.find(sel => sel.ingredient.name === ingredientName);
+    };
+
+    // Agregar/modificar ingrediente
+    const toggleIngredient = (ingredient: PizzaIngredient) => {
+        const existing = getIngredientSelection(ingredient.name);
+
+        if (existing) {
+            // Si existe y el half es el mismo, quitar
+            if (existing.half === selectedHalf) {
+                setIngredients(prev => prev.filter(sel => sel.ingredient.name !== ingredient.name));
+            } else {
+                // Cambiar el half
+                setIngredients(prev => prev.map(sel =>
+                    sel.ingredient.name === ingredient.name
+                        ? { ...sel, half: selectedHalf }
+                        : sel
+                ));
+            }
+        } else {
+            // Agregar nuevo
+            setIngredients(prev => [...prev, { ingredient, half: selectedHalf }]);
+        }
+    };
+
+    // Obtener ingredientes por mitad
+    const leftIngredients = ingredients.filter(sel => sel.half === 'left' || sel.half === 'full');
+    const rightIngredients = ingredients.filter(sel => sel.half === 'right' || sel.half === 'full');
+
+    // Manejar submit
+    const handleSubmit = () => {
+        const config: PizzaConfiguration = {
+            size: isSpecialPizza ? 'Familiar' : size,
+            basePrice: isSpecialPizza ? item.price : pizzaBasePrices[size],
+            ingredients,
+            isSpecialPizza,
+            specialPizzaName: isSpecialPizza ? item.name : undefined
+        };
+        onSubmit(item, config, quantity, extraModifiers);
+    };
+
+    // Colores por categoría (BRO Style)
+    const categoryColors: Record<string, { bg: string; text: string; border: string }> = {
+        A: { bg: 'bg-brand/10', text: 'text-brand', border: 'border-brand/30' },
+        B: { bg: 'bg-white/5', text: 'text-gray-300', border: 'border-white/10' },
+        C: { bg: 'bg-red-500/10', text: 'text-red-400', border: 'border-red-500/30' }
+    };
+
+    return (
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/90 backdrop-blur-xl animate-fadeIn p-0 sm:p-4">
+            <div
+                className="w-full max-w-lg bg-card rounded-t-[2.5rem] sm:rounded-[2.5rem] max-h-[95vh] flex flex-col transform transition-transform border border-white/10 bro-paper-card overflow-hidden"
+            >
+                {/* Header */}
+                <div className="p-6 border-b border-white/5 flex items-center justify-between bg-black/20">
+                    <div>
+                        <h2 className="text-2xl font-black text-white uppercase italic bro-gradient-text tracking-tighter">
+                            {isSpecialPizza ? item.name : 'Pizza Maker'}
+                        </h2>
+                        <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-1">Configura tu pizza a medida</p>
+                    </div>
+                    <button
+                        onClick={onClose}
+                        className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-white hover:bg-white/10 border border-white/10 transition-all active:scale-90"
+                    >
+                        ✕
+                    </button>
+                </div>
+
+                {/* Contenido scrolleable */}
+                <div className="flex-1 overflow-y-auto p-6 space-y-10 scrollbar-hide">
+
+                    {/* Selector de tamaño (solo para pizza personalizada) */}
+                    {!isSpecialPizza && (
+                        <div>
+                            <div className="flex items-center gap-3 mb-4">
+                                <div className="h-1 w-8 bg-brand rounded-full"></div>
+                                <h3 className="text-[11px] font-black text-gray-400 uppercase tracking-[0.2em]">Seleccionar Tamaño</h3>
+                            </div>
+                            <div className="grid grid-cols-3 gap-3">
+                                {(['Pequeña', 'Mediana', 'Familiar'] as PizzaSize[]).map(s => (
+                                    <button
+                                        key={s}
+                                        onClick={() => setSize(s)}
+                                        className={`p-4 rounded-2xl border-2 transition-all ${size === s
+                                            ? 'border-brand bg-brand/10 text-brand shadow-lg'
+                                            : 'border-white/5 bg-white/5 text-gray-500 hover:border-white/20'
+                                            }`}
+                                    >
+                                        <div className="text-xl font-black">${pizzaBasePrices[s]}</div>
+                                        <div className="text-[9px] font-black uppercase tracking-widest mt-1 opacity-70">{s}</div>
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* VISTA PREVIA DE LA PIZZA (Themed) */}
+                    <div className="flex flex-col items-center">
+                        <div className="relative w-64 h-64 mb-6">
+                            {/* Círculo base de la pizza - Estilo Premium BRO */}
+                            <div className="absolute inset-2 rounded-full bg-gradient-to-br from-[#D2691E] to-[#8B4513] border-[6px] border-black/30 shadow-[0_20px_50px_rgba(0,0,0,0.6)] overflow-hidden">
+                                {/* Masa */}
+                                <div className="absolute inset-0 rounded-full border-[10px] border-[#F4A460]/20"></div>
+
+                                {/* Línea divisoria */}
+                                <div className="absolute top-0 bottom-0 left-1/2 w-0.5 bg-black/20 transform -translate-x-1/2" />
+
+                                {/* Mitad izquierda */}
+                                <div
+                                    className={`absolute top-0 bottom-0 left-0 w-1/2 flex items-center justify-center cursor-pointer transition-all ${selectedHalf === 'left' ? 'bg-brand/20 border-r border-brand/50' : 'hover:bg-white/5'
+                                        }`}
+                                    onClick={() => setSelectedHalf('left')}
+                                >
+                                    <div className="text-center px-2">
+                                        {leftIngredients.length > 0 ? (
+                                            <div className="flex flex-wrap justify-center gap-1">
+                                                {leftIngredients.slice(0, 6).map(sel => (
+                                                    <div key={sel.ingredient.name} className="w-2 h-2 rounded-full bg-white shadow-sm" title={sel.ingredient.name}></div>
+                                                ))}
+                                            </div>
+                                        ) : (
+                                            <span className="text-white/10 font-black text-xs uppercase tracking-widest">IZQ</span>
+                                        )}
+                                    </div>
+                                </div>
+
+                                {/* Mitad derecha */}
+                                <div
+                                    className={`absolute top-0 bottom-0 right-0 w-1/2 flex items-center justify-center cursor-pointer transition-all ${selectedHalf === 'right' ? 'bg-brand/20 border-l border-brand/50' : 'hover:bg-white/5'
+                                        }`}
+                                    onClick={() => setSelectedHalf('right')}
+                                >
+                                    <div className="text-center px-2">
+                                        {rightIngredients.length > 0 ? (
+                                            <div className="flex flex-wrap justify-center gap-1">
+                                                {rightIngredients.slice(0, 6).map(sel => (
+                                                    <div key={sel.ingredient.name} className="w-2 h-2 rounded-full bg-white shadow-sm" title={sel.ingredient.name}></div>
+                                                ))}
+                                            </div>
+                                        ) : (
+                                            <span className="text-white/10 font-black text-xs uppercase tracking-widest">DER</span>
+                                        )}
+                                    </div>
+                                </div>
+
+                                {/* Centro clickeable para toda la pizza */}
+                                <div
+                                    className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full cursor-pointer transition-all flex items-center justify-center z-10 border-4 ${selectedHalf === 'full'
+                                        ? 'bg-brand text-black shadow-[0_0_20px_var(--brand-shadow-color)] border-white'
+                                        : 'bg-black/60 text-white/50 hover:bg-black/80 border-white/10'
+                                        }`}
+                                    onClick={() => setSelectedHalf('full')}
+                                >
+                                    <span className="text-[9px] font-black uppercase tracking-widest">{selectedHalf === 'full' ? 'BRO' : 'TODO'}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* SELECTOR DE MITAD (Themed Buttons) */}
+                        <div className="flex bg-white/5 rounded-2xl p-1.5 border border-white/5">
+                            <button
+                                onClick={() => setSelectedHalf('left')}
+                                className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${selectedHalf === 'left'
+                                    ? 'bg-brand text-black shadow-lg'
+                                    : 'text-gray-500 hover:text-white'
+                                    }`}
+                            >
+                                Mitad Izq
+                            </button>
+                            <button
+                                onClick={() => setSelectedHalf('full')}
+                                className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${selectedHalf === 'full'
+                                    ? 'bg-brand text-black shadow-lg'
+                                    : 'text-gray-500 hover:text-white'
+                                    }`}
+                            >
+                                Toda
+                            </button>
+                            <button
+                                onClick={() => setSelectedHalf('right')}
+                                className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${selectedHalf === 'right'
+                                    ? 'bg-brand text-black shadow-lg'
+                                    : 'text-gray-500 hover:text-white'
+                                    }`}
+                            >
+                                Mitad Der
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* LISTA DE INGREDIENTES (Themed Cards) */}
+                    <div className="space-y-10">
+                        <div className="flex items-center gap-3">
+                            <div className="h-1 w-8 bg-brand rounded-full"></div>
+                            <h3 className="text-[11px] font-black text-gray-400 uppercase tracking-[0.2em]">Ingredientes Adicionales</h3>
+                        </div>
+
+                        {(Object.entries(groupedIngredients) as [string, PizzaIngredient[]][]).filter(([_, ings]) => ings.length > 0).map(([category, ings]) => (
+                            <div key={category} className="space-y-4">
+                                <div className="flex items-center px-1">
+                                    <span className={`text-[9px] font-black uppercase tracking-widest ${categoryColors[category].text}`}>
+                                        {category === 'A' ? 'Proteínas Premium' : category === 'B' ? 'Vegetales Frescos' : 'Extras Especiales'}
+                                    </span>
+                                </div>
+                                <div className="grid grid-cols-2 gap-3">
+                                    {ings.map(ing => {
+                                        const selection = getIngredientSelection(ing.name);
+                                        const isDefault = isSpecialPizza && defaultIngredients.includes(ing.name);
+                                        const isSelected = !!selection;
+                                        const price = ing.prices[size as PizzaSize];
+
+                                        return (
+                                            <button
+                                                key={ing.name}
+                                                onClick={() => toggleIngredient(ing)}
+                                                className={`p-4 rounded-2xl border-2 transition-all text-left relative overflow-hidden ${isSelected
+                                                    ? `${categoryColors[ing.category].border} ${categoryColors[ing.category].bg} shadow-lg shadow-black/20`
+                                                    : 'border-white/5 bg-white/[0.03] hover:border-white/20'
+                                                    }`}
+                                            >
+                                                <div className="flex items-center justify-between mb-1.5">
+                                                    <span className={`text-[11px] font-black uppercase tracking-tight ${isSelected ? 'text-white' : 'text-gray-500'}`}>
+                                                        {ing.name}
+                                                    </span>
+                                                    {isSelected && (
+                                                        <span className="text-[9px] px-2 py-0.5 rounded-md bg-brand text-black font-black">
+                                                            {selection.half === 'full' ? 'TODO' : selection.half === 'left' ? 'IZQ' : 'DER'}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                                <div className="text-[10px] font-black tracking-widest">
+                                                    {isDefault ? (
+                                                        <span className="text-brand">INCLUIDO</span>
+                                                    ) : (
+                                                        <span className="text-gray-400">+${price.toFixed(2)}</span>
+                                                    )}
+                                                </div>
+
+                                                {/* Indicador visual de selección en la carta */}
+                                                {isSelected && (
+                                                    <div className="absolute bottom-0 right-0 w-8 h-8 flex items-end justify-end p-1">
+                                                        <svg className="w-4 h-4 text-brand" fill="currentColor" viewBox="0 0 20 20">
+                                                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                                        </svg>
+                                                    </div>
+                                                )}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* MODIFICADORES ADICIONALES (Themed) */}
+                    {assignedModifierGroups.length > 0 && (
+                        <div className="space-y-8 pt-6 border-t border-white/5">
+                            <div className="flex items-center gap-3">
+                                <div className="h-1 w-8 bg-brand rounded-full"></div>
+                                <h3 className="text-[11px] font-black text-gray-400 uppercase tracking-[0.2em]">Más Opciones</h3>
+                            </div>
+                            {assignedModifierGroups.map(group => (
+                                <div key={group.displayTitle} className="space-y-4">
+                                    <h4 className="text-[10px] font-black text-gray-600 uppercase tracking-widest px-1">{group.displayTitle}</h4>
+                                    <div className="grid grid-cols-2 gap-3">
+                                        {group.options.map(opt => {
+                                            const isSelected = !!extraModifiers.find(m => m.groupTitle === group.displayTitle && m.option.name === opt.name);
+                                            return (
+                                                <button
+                                                    key={opt.name}
+                                                    onClick={() => handleToggleModifier(group, opt)}
+                                                    className={`p-4 rounded-2xl border-2 transition-all text-left ${isSelected
+                                                        ? 'border-brand bg-brand/10 text-white shadow-lg'
+                                                        : 'border-white/5 bg-white/[0.03] text-gray-500 hover:border-white/20'
+                                                        }`}
+                                                >
+                                                    <div className="font-black text-[11px] uppercase truncate">{opt.name}</div>
+                                                    <div className="text-[10px] font-bold text-gray-400 mt-1">
+                                                        {opt.price > 0 ? `+$${opt.price.toFixed(2)}` : 'GRATIS'}
+                                                    </div>
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+
+                    {/* Selector de Cantidad (Themed) */}
+                    <div className="flex items-center justify-between bg-white/[0.03] rounded-3xl p-5 border border-white/5">
+                        <span className="text-gray-500 text-[10px] font-black uppercase tracking-widest">Cantidad</span>
+                        <div className="flex items-center gap-6">
+                            <button
+                                onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                                className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-white font-black hover:bg-white/10 transition-colors border border-white/10 active:scale-90"
+                            >
+                                −
+                            </button>
+                            <span className="text-white font-black text-2xl w-8 text-center">{quantity}</span>
+                            <button
+                                onClick={() => setQuantity(quantity + 1)}
+                                className="w-12 h-12 rounded-2xl bg-brand flex items-center justify-center text-black font-black hover:bg-brand/80 transition-colors shadow-xl shadow-brand/20 active:scale-90"
+                            >
+                                +
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Footer Pricing & Submit */}
+                <div className="p-8 pb-10 border-t border-white/10 bg-black/40 backdrop-blur-3xl">
+                    <div className="flex items-center justify-between gap-8">
+                        <div className="shrink-0">
+                            <div className="text-gray-500 text-[9px] font-black uppercase tracking-widest mb-1">Inversión Total</div>
+                            <div className="text-3xl font-black text-white tracking-tighter">
+                                ${totalPrice.toFixed(2)}
+                            </div>
+                            <div className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">
+                                Bs. {(totalPrice * activeRate).toFixed(2)}
+                            </div>
+                        </div>
+                        <button
+                            onClick={handleSubmit}
+                            disabled={!isSpecialPizza && ingredients.length === 0}
+                            className={`flex-grow h-16 rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all border-b-4 border-black/20 ${(isSpecialPizza || ingredients.length > 0)
+                                ? 'bg-brand text-black shadow-2xl shadow-brand/20 active:scale-95'
+                                : 'bg-gray-800 text-gray-600 border-none cursor-not-allowed opacity-50'
+                                }`}
+                        >
+                            {initialCartItem ? 'Actualizar Pedido' : 'Confirmar Pizza'}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default PizzaBuilderModal;

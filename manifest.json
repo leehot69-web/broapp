@@ -1,0 +1,51 @@
+{
+  "short_name": "BRO Menu",
+  "name": "BRO - Menú Digital",
+  "description": "Sistema profesional de pedidos y gestión para BRO. Premium, rápido e intuitivo.",
+  "icons": [
+    {
+      "src": "/menu_images/bro.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any"
+    },
+    {
+      "src": "/menu_images/bro.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/menu_images/bro.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/menu_images/bro.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "BRO Menú Premium"
+    }
+  ],
+  "start_url": "/",
+  "scope": "/",
+  "id": "/?source=pwa",
+  "display": "standalone",
+  "display_override": [
+    "standalone",
+    "fullscreen",
+    "minimal-ui"
+  ],
+  "orientation": "portrait",
+  "theme_color": "#FFD700",
+  "background_color": "#000000",
+  "lang": "es",
+  "categories": [
+    "business",
+    "food"
+  ]
+}
