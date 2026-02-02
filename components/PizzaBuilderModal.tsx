@@ -93,11 +93,22 @@ const PizzaBuilderModal: React.FC<PizzaBuilderModalProps> = ({
         let basePrice = isSpecialPizza ? item.price : pizzaBasePrices[size];
 
         // Sumar ingredientes
+        let proteinCount = 0;
         ingredients.forEach(sel => {
             if (isSpecialPizza && defaultIngredients.includes(sel.ingredient.name)) {
                 return;
             }
-            const ingPrice = sel.ingredient.prices[size as PizzaSize];
+
+            let ingPrice = sel.ingredient.prices[size as PizzaSize];
+
+            // Si es proteína (Categoría A) y es la primera adicional que agregamos, es gratis
+            if (sel.ingredient.category === 'A' && !isSpecialPizza) {
+                proteinCount++;
+                if (proteinCount === 1) {
+                    ingPrice = 0;
+                }
+            }
+
             if (sel.half === 'left' || sel.half === 'right') {
                 basePrice += ingPrice / 2;
             } else {
@@ -179,17 +190,20 @@ const PizzaBuilderModal: React.FC<PizzaBuilderModalProps> = ({
             <div
                 className="w-full max-w-2xl bg-card rounded-t-[2rem] sm:rounded-[2rem] max-h-[100vh] flex flex-col transform transition-transform border-x border-t border-white/10 bro-paper-card overflow-hidden"
             >
-                {/* Header */}
-                <div className="p-6 border-b border-white/5 flex items-center justify-between bg-black/20">
-                    <div>
-                        <h2 className="text-2xl font-black text-white uppercase italic bro-gradient-text tracking-tighter">
-                            {isSpecialPizza ? item.name : 'Pizza Maker'}
-                        </h2>
-                        <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-1">Configura tu pizza a medida</p>
+                {/* Header Compacto */}
+                <div className="px-5 py-4 border-b border-white/5 flex items-center justify-between bg-black/20">
+                    <div className="flex items-center gap-3">
+                        <div className="h-10 w-1 bg-brand rounded-full"></div>
+                        <div>
+                            <h2 className="text-xl font-black text-white uppercase italic tracking-tighter">
+                                {isSpecialPizza ? item.name : 'Configurar Pizza'}
+                            </h2>
+                            <p className="text-[9px] font-bold text-gray-600 uppercase tracking-widest leading-none">Personaliza tu orden</p>
+                        </div>
                     </div>
                     <button
                         onClick={onClose}
-                        className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-white hover:bg-white/10 border border-white/10 transition-all active:scale-90"
+                        className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white active:scale-90 border border-white/10"
                     >
                         ✕
                     </button>
@@ -198,13 +212,10 @@ const PizzaBuilderModal: React.FC<PizzaBuilderModalProps> = ({
                 {/* Contenido scrolleable */}
                 <div className="flex-1 overflow-y-auto p-6 space-y-10 scrollbar-hide">
 
-                    {/* Selector de tamaño (solo para pizza personalizada) */}
+                    {/* Selector de tamaño */}
                     {!isSpecialPizza && (
-                        <div>
-                            <div className="flex items-center gap-3 mb-4">
-                                <div className="h-1 w-8 bg-brand rounded-full"></div>
-                                <h3 className="text-[11px] font-black text-gray-400 uppercase tracking-[0.2em]">Seleccionar Tamaño</h3>
-                            </div>
+                        <div className="px-1">
+                            <h3 className="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-4">Tamaño de base</h3>
                             <div className="grid grid-cols-3 gap-3">
                                 {(['Pequeña', 'Mediana', 'Familiar'] as PizzaSize[]).map(s => (
                                     <button
@@ -336,43 +347,50 @@ const PizzaBuilderModal: React.FC<PizzaBuilderModalProps> = ({
                                         const selection = getIngredientSelection(ing.name);
                                         const isDefault = isSpecialPizza && defaultIngredients.includes(ing.name);
                                         const isSelected = !!selection;
-                                        const price = ing.prices[size as PizzaSize];
+
+                                        let price = ing.prices[size as PizzaSize];
+                                        const isProtein = ing.category === 'A';
+                                        let isIncluded = isDefault;
+
+                                        // Si es proteína y es la primera, mostrar como incluido
+                                        if (isProtein && !isSpecialPizza) {
+                                            const currentProteins = ingredients.filter(s => s.ingredient.category === 'A');
+                                            const isFirstProtein = currentProteins.length > 0 && currentProteins[0].ingredient.name === ing.name;
+                                            const hasNoProteinsYet = currentProteins.length === 0;
+
+                                            if (isSelected && isFirstProtein) {
+                                                isIncluded = true;
+                                                price = 0;
+                                            } else if (!isSelected && hasNoProteinsYet) {
+                                                isIncluded = true;
+                                                price = 0;
+                                            }
+                                        }
 
                                         return (
                                             <button
                                                 key={ing.name}
                                                 onClick={() => toggleIngredient(ing)}
-                                                className={`p-4 rounded-2xl border-2 transition-all text-left relative overflow-hidden ${isSelected
-                                                    ? `border-brand bg-brand shadow-xl scale-[1.02]`
+                                                className={`p-3 rounded-xl border transition-all text-left relative overflow-hidden h-[74px] flex flex-col justify-center ${isSelected
+                                                    ? `border-brand bg-brand shadow-lg`
                                                     : 'border-white/5 bg-white/[0.03] hover:border-white/20'
                                                     }`}
                                             >
-                                                <div className="flex items-center justify-between mb-1.5">
-                                                    <span className={`text-[11px] font-black uppercase tracking-tight ${isSelected ? 'text-black' : 'text-gray-500'}`}>
+                                                <div className="flex items-center justify-between mb-1">
+                                                    <span className={`text-[10px] font-black uppercase tracking-tight leading-tight line-clamp-2 ${isSelected ? 'text-black' : 'text-gray-400'}`}>
                                                         {ing.name}
                                                     </span>
                                                     {isSelected && (
-                                                        <span className="text-[9px] px-2 py-0.5 rounded-md bg-black text-brand font-black">
-                                                            {selection.half === 'full' ? 'TODO' : selection.half === 'left' ? 'IZQ' : 'DER'}
-                                                        </span>
+                                                        <div className="flex flex-col items-end shrink-0 ml-2">
+                                                            <span className="text-[7px] px-1.5 py-0.5 rounded-md bg-black text-brand font-black">
+                                                                {selection.half === 'full' ? 'TODO' : selection.half === 'left' ? 'IZQ' : 'DER'}
+                                                            </span>
+                                                        </div>
                                                     )}
                                                 </div>
-                                                <div className={`text-[10px] font-black tracking-widest ${isSelected ? 'text-black/60' : 'text-gray-400'}`}>
-                                                    {isDefault ? (
-                                                        <span className={isSelected ? 'text-black' : 'text-brand'}>INCLUIDO</span>
-                                                    ) : (
-                                                        <span>+${price.toFixed(2)}</span>
-                                                    )}
+                                                <div className={`text-[9px] font-black tracking-widest ${isSelected ? 'text-black/60' : 'text-gray-500'}`}>
+                                                    {isIncluded ? 'INCLUIDO' : `+$${price.toFixed(2)}`}
                                                 </div>
-
-                                                {/* Indicador visual de selección en la carta */}
-                                                {isSelected && (
-                                                    <div className="absolute bottom-0 right-0 w-8 h-8 flex items-end justify-end p-1">
-                                                        <svg className="w-4 h-4 text-black" fill="currentColor" viewBox="0 0 20 20">
-                                                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                                                        </svg>
-                                                    </div>
-                                                )}
                                             </button>
                                         );
                                     })}
@@ -416,48 +434,31 @@ const PizzaBuilderModal: React.FC<PizzaBuilderModalProps> = ({
                         </div>
                     )}
 
-                    {/* Selector de Cantidad (Themed) */}
-                    <div className="flex items-center justify-between bg-white/[0.03] rounded-3xl p-5 border border-white/5">
-                        <span className="text-gray-500 text-[10px] font-black uppercase tracking-widest">Cantidad</span>
-                        <div className="flex items-center gap-6">
-                            <button
-                                onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                                className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-white font-black hover:bg-white/10 transition-colors border border-white/10 active:scale-90"
-                            >
-                                −
-                            </button>
-                            <span className="text-white font-black text-2xl w-8 text-center">{quantity}</span>
-                            <button
-                                onClick={() => setQuantity(quantity + 1)}
-                                className="w-12 h-12 rounded-2xl bg-brand flex items-center justify-center text-black font-black hover:bg-brand/80 transition-colors shadow-xl shadow-brand/20 active:scale-90"
-                            >
-                                +
-                            </button>
-                        </div>
-                    </div>
                 </div>
 
-                {/* Footer Pricing & Submit */}
-                <div className="p-8 pb-10 border-t border-white/10 bg-black/40 backdrop-blur-3xl">
-                    <div className="flex items-center justify-between gap-8">
-                        <div className="shrink-0">
-                            <div className="text-gray-500 text-[9px] font-black uppercase tracking-widest mb-1">Inversión Total</div>
-                            <div className="text-3xl font-black text-white tracking-tighter">
-                                ${totalPrice.toFixed(2)}
-                            </div>
-                            <div className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">
-                                Bs. {(totalPrice * activeRate).toFixed(2)}
-                            </div>
+                {/* Footer Compacto */}
+                <div className="px-4 py-4 border-t border-white/10 bg-black/80 backdrop-blur-3xl z-30">
+                    <div className="max-w-xl mx-auto flex items-center gap-3">
+                        {/* Selector de Cantidad */}
+                        <div className="flex items-center bg-white/10 rounded-full h-12 px-1 border border-white/5 shrink-0">
+                            <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="w-10 h-10 flex items-center justify-center text-white active:scale-90 text-xl font-black">－</button>
+                            <span className="w-6 text-center font-black text-sm text-white">{quantity}</span>
+                            <button onClick={() => setQuantity(quantity + 1)} className="w-10 h-10 flex items-center justify-center text-white active:scale-90 text-xl font-black">＋</button>
                         </div>
+
+                        {/* Botón de Confirmar */}
                         <button
                             onClick={handleSubmit}
                             disabled={!isSpecialPizza && ingredients.length === 0}
-                            className={`flex-grow h-16 rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all border-b-4 border-black/20 ${(isSpecialPizza || ingredients.length > 0)
-                                ? 'bg-brand text-black shadow-2xl shadow-brand/20 active:scale-95'
-                                : 'bg-gray-800 text-gray-600 border-none cursor-not-allowed opacity-50'
-                                }`}
+                            className="flex-grow h-12 bg-brand text-black rounded-full font-black uppercase tracking-widest shadow-xl active:scale-95 disabled:opacity-30 disabled:grayscale transition-all flex justify-between items-center px-6"
                         >
-                            {initialCartItem ? 'Actualizar Pedido' : 'Confirmar Pizza'}
+                            <span className="text-[10px]">{initialCartItem ? 'ACTUALIZAR' : 'CONFIRMAR'}</span>
+                            <div className="flex items-baseline gap-1">
+                                <span className="text-[10px] opacity-70 italic">$</span>
+                                <span className="text-lg font-black tracking-tighter italic">
+                                    {(totalPrice).toFixed(2)}
+                                </span>
+                            </div>
                         </button>
                     </div>
                 </div>
